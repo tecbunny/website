@@ -1,24 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-
-// Mock user database (in production, use a real database)
-const users = [
-  {
-    id: '1',
-    email: 'admin@tecbunny.com',
-    password: '$2a$10$rOvHBkN5zP.MxK2k4QJy9.9vqGq0QH8q5k2lBqF.6q5.3.4.5.6.7', // 'password123'
-    name: 'Admin User',
-    role: 'admin'
-  },
-  {
-    id: '2',
-    email: 'user@example.com',
-    password: '$2a$10$rOvHBkN5zP.MxK2k4QJy9.9vqGq0QH8q5k2lBqF.6q5.3.4.5.6.7', // 'password123'
-    name: 'John Doe',
-    role: 'user'
-  }
-]
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,17 +15,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Find user
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase())
-    if (!user) {
+    // Find user in Supabase
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email.toLowerCase())
+      .single()
+
+    if (userError || !user) {
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       )
     }
 
-    // For demo purposes, accept 'password123' for any user
-    const isValidPassword = password === 'password123' || await bcrypt.compare(password, user.password)
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password_hash)
     
     if (!isValidPassword) {
       return NextResponse.json(
@@ -63,8 +51,12 @@ export async function POST(request: NextRequest) {
     )
 
     // Return user data (without password)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = user
+    const userWithoutPassword = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role
+    }
 
     return NextResponse.json({
       success: true,

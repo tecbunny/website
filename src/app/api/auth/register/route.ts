@@ -1,18 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-
-// Mock user database (in production, use a real database like Supabase)
-const users = [
-  {
-    id: '1',
-    email: 'admin@tecbunny.com',
-    password: '$2a$10$rOvHBkN5zP.MxK2k4QJy9.9vqGq0QH8q5k2lBqF.6q5.3.4.5.6.7', // 'password123'
-    name: 'Admin User',
-    role: 'admin',
-    createdAt: new Date().toISOString()
-  }
-]
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,7 +41,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase())
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('email')
+      .eq('email', email.toLowerCase())
+      .single()
+
     if (existingUser) {
       return NextResponse.json(
         { error: 'User with this email already exists' },
@@ -61,19 +55,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const saltRounds = 12
+    const passwordHash = await bcrypt.hash(password, saltRounds)
 
-    // Create new user
-    const newUser = {
-      id: (users.length + 1).toString(),
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      name,
-      role: 'user',
-      createdAt: new Date().toISOString()
+    // Create user in Supabase
+    const { data: newUser, error: createError } = await supabase
+      .from('users')
+      .insert({
+        email: email.toLowerCase(),
+        password_hash: passwordHash,
+        name: name.trim(),
+        role: 'user'
+      })
+      .select('id, email, name, role')
+      .single()
+
+    if (createError || !newUser) {
+      console.error('Supabase error:', createError)
+      return NextResponse.json(
+        { error: 'Failed to create user account' },
+        { status: 500 }
+      )
     }
-
-    users.push(newUser)
 
     // Create JWT token
     const token = jwt.sign(
@@ -86,16 +89,12 @@ export async function POST(request: NextRequest) {
       { expiresIn: '7d' }
     )
 
-    // Return user data (without password)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = newUser
-
     return NextResponse.json({
       success: true,
-      user: userWithoutPassword,
+      user: newUser,
       token,
       message: 'Account created successfully'
-    })
+    }, { status: 201 })
 
   } catch (error) {
     console.error('Registration error:', error)
