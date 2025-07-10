@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, Truck, Shield, Headphones, ArrowRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useHomepageSettings } from "@/hooks/useHomepageSettings";
 
 const categories = [
   { name: "Computer Accessories", icon: "/computer.svg", href: "/products?cat=computer", count: "500+ Items" },
@@ -25,6 +26,7 @@ const testimonials = [
 
 export default function Home() {
   const { addToCart } = useCart();
+  const { settings, isLoading } = useHomepageSettings();
 
   const handleAddToCart = (product: { id: string; name: string; price: number; originalPrice?: number; image: string; rating: number }) => {
     addToCart({
@@ -36,27 +38,34 @@ export default function Home() {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {/* Hero Banner */}
-      <section className="relative w-full bg-gradient-to-r from-blue-600 via-blue-500 to-purple-600 text-white py-16 px-4 overflow-hidden">
+      <section className={`relative w-full bg-gradient-to-r ${settings?.banner_background_color || 'from-blue-600 via-blue-500 to-purple-600'} text-${settings?.banner_text_color || 'white'} py-16 px-4 overflow-hidden`}>
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="lg:w-1/2">
             <h1 className="text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-              Premium Tech <br />
+              {settings?.banner_title || 'Premium Tech'} <br />
               <span className="text-yellow-300">Accessories</span>
             </h1>
             <p className="text-xl mb-8 text-blue-100 max-w-lg">
-              Discover the latest in technology accessories with unbeatable prices, 
-              premium quality, and lightning-fast delivery across India.
+              {settings?.banner_subtitle || 'Discover the latest in technology accessories with unbeatable prices, premium quality, and lightning-fast delivery across India.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/products" className="bg-white text-blue-700 font-bold px-8 py-4 rounded-full shadow-lg hover:bg-blue-50 transition-all transform hover:scale-105">
-                Shop Now <ArrowRight className="inline ml-2 h-5 w-5" />
+                {settings?.banner_button_primary_text || 'Shop Now'} <ArrowRight className="inline ml-2 h-5 w-5" />
               </Link>
               <Link href="/products" className="border-2 border-white text-white font-bold px-8 py-4 rounded-full hover:bg-white hover:text-blue-700 transition-all">
-                View Categories
+                {settings?.banner_button_secondary_text || 'View Categories'}
               </Link>
             </div>
           </div>
@@ -82,22 +91,22 @@ export default function Home() {
             <div className="flex items-center justify-center gap-3">
               <Truck className="h-8 w-8 text-blue-600" />
               <div>
-                <h3 className="font-bold text-gray-800">Free Delivery</h3>
-                <p className="text-sm text-gray-600">On orders above ₹500</p>
+                <h3 className="font-bold text-gray-800">{settings?.feature_delivery_title || 'Free Delivery'}</h3>
+                <p className="text-sm text-gray-600">{settings?.feature_delivery_subtitle || 'On orders above ₹500'}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-3">
               <Shield className="h-8 w-8 text-green-600" />
               <div>
-                <h3 className="font-bold text-gray-800">Genuine Products</h3>
-                <p className="text-sm text-gray-600">100% authentic guarantee</p>
+                <h3 className="font-bold text-gray-800">{settings?.feature_genuine_title || 'Genuine Products'}</h3>
+                <p className="text-sm text-gray-600">{settings?.feature_genuine_subtitle || '100% authentic guarantee'}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-3">
               <Headphones className="h-8 w-8 text-purple-600" />
               <div>
-                <h3 className="font-bold text-gray-800">24/7 Support</h3>
-                <p className="text-sm text-gray-600">Always here to help</p>
+                <h3 className="font-bold text-gray-800">{settings?.feature_support_title || '24/7 Support'}</h3>
+                <p className="text-sm text-gray-600">{settings?.feature_support_subtitle || 'Always here to help'}</p>
               </div>
             </div>
           </div>

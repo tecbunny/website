@@ -7,12 +7,15 @@ import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, User, Menu, X, Heart, LogOut, Settings, Package } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useHomepageSettings } from "@/hooks/useHomepageSettings";
+import Image from "next/image";
 
 export default function Navbar() {
   const { cart } = useCart();
   const { user: authUser, isAuthenticated: authAuthenticated, logout: authLogout } = useAuth();
   const { user: nextAuthUser, isAuthenticated: nextAuthAuthenticated, logout: nextAuthLogout } = useNextAuth();
   const { data: session } = useSession();
+  const { settings } = useHomepageSettings();
   
   // Use NextAuth session if available, fallback to custom auth
   const user = session?.user || nextAuthUser || authUser;
@@ -40,7 +43,10 @@ export default function Navbar() {
     { href: "/products?cat=network", label: "Network" },
     { href: "/products?cat=mobile", label: "Mobile" },
     { href: "/products?cat=personal", label: "Personal" },
-    ...(user?.role === 'admin' ? [{ href: "/admin/crm", label: "Admin CRM" }] : []),
+    ...(user?.role === 'admin' ? [
+      { href: "/admin/crm", label: "Admin CRM" },
+      { href: "/admin/homepage-editor", label: "Homepage Editor" }
+    ] : []),
   ];
 
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -80,11 +86,25 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">T</span>
-            </div>
+            {settings?.logo_url ? (
+              <div className="w-10 h-10 rounded-xl overflow-hidden">
+                <Image 
+                  src={settings.logo_url} 
+                  alt={settings.site_name || 'TecBunny'} 
+                  width={40} 
+                  height={40}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-xl">
+                  {(settings?.site_name || 'TecBunny')[0]}
+                </span>
+              </div>
+            )}
             <span className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TecBunny
+              {settings?.site_name || 'TecBunny'}
             </span>
           </Link>
 

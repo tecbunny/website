@@ -1,75 +1,98 @@
-import { supabase } from './supabase'
+import { supabaseAdmin } from './supabase'
 import bcrypt from 'bcryptjs'
+
+export async function testDatabaseConnection() {
+  try {
+    console.log('Testing database connection...')
+    
+    // Test basic connection
+    const { data, error } = await supabaseAdmin
+      .from('users')
+      .select('id, email, role')
+      .limit(1)
+
+    if (error) {
+      console.error('Database connection test failed:', error)
+      return { 
+        success: false, 
+        error: error.message,
+        details: 'Could not connect to users table. Please ensure the table exists.'
+      }
+    }
+
+    console.log('Database connection test passed')
+    return { 
+      success: true, 
+      data: data,
+      message: 'Database connection successful'
+    }
+
+  } catch (error) {
+    console.error('Database connection error:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      details: 'Failed to connect to database'
+    }
+  }
+}
 
 export async function initializeDatabase() {
   try {
     console.log('Initializing database...')
 
-    // Create some sample users if they don't exist
-    const adminPassword = await bcrypt.hash('password123', 12)
-    const userPassword = await bcrypt.hash('password123', 12)
-
-    // Insert admin user
-    const { error: adminError } = await supabase
-      .from('users')
-      .upsert({
-        email: 'admin@tecbunny.com',
-        password_hash: adminPassword,
-        name: 'Admin User',
-        role: 'admin'
-      }, {
-        onConflict: 'email'
-      })
-
-    if (adminError) {
-      console.error('Error creating admin user:', adminError)
-    } else {
-      console.log('Admin user created/updated successfully')
+    // First test the connection
+    const connectionTest = await testDatabaseConnection()
+    if (!connectionTest.success) {
+      return connectionTest
     }
 
-    // Insert regular user
-    const { error: userError } = await supabase
+    // Check if admin user already exists
+    const { data: existingAdmin } = await supabaseAdmin
       .from('users')
-      .upsert({
-        email: 'user@example.com',
-        password_hash: userPassword,
-        name: 'John Doe',
-        role: 'user'
-      }, {
-        onConflict: 'email'
-      })
+      .select('id')
+      .eq('email', 'admin@tecbunny.com')
+      .eq('role', 'admin')
+      .single()
 
-    if (userError) {
-      console.error('Error creating regular user:', userError)
+    if (!existingAdmin) {
+      // Create admin user
+      const adminPassword = await bcrypt.hash('admin123', 12)
+      
+      const { error: adminError } = await supabaseAdmin
+        .from('users')
+        .insert({
+          email: 'admin@tecbunny.com',
+          password_hash: adminPassword,
+          name: 'Admin User',
+          role: 'admin',
+          email_verified: true,
+          provider: 'email'
+        })
+
+      if (adminError) {
+        console.error('Error creating admin user:', adminError)
+        return { 
+          success: false, 
+          error: adminError.message,
+          details: 'Failed to create admin user'
+        }
+      } else {
+        console.log('Admin user created successfully')
+      }
     } else {
-      console.log('Regular user created/updated successfully')
+      console.log('Admin user already exists')
     }
 
     console.log('Database initialization complete!')
     return { success: true }
 
   } catch (error) {
-    console.error('Database initialization failed:', error)
-    return { success: false, error }
-  }
-}
-
-export async function testDatabaseConnection() {
-  try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('count')
-      .limit(1)
-
-    if (error) {
-      console.error('Database connection test failed:', error)
-      return { success: false, error }
+    console.error('Database initialization error:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      details: 'Database initialization failed'
     }
-
-    console.log('Database connection successful!')
-    return { success: true, data }
-  } catch (error) {
-    console.error('Database connection test error:', error)
-    return { success: false, error }
   }
 }
