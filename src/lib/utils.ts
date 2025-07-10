@@ -1,16 +1,17 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+export function cn(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(" ");
+}
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+export function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
 
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(price)
+  }).format(price);
 }
 
 export function formatDate(date: string | Date): string {
@@ -18,112 +19,106 @@ export function formatDate(date: string | Date): string {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(new Date(date))
-}
-
-export function formatDateTime(date: string | Date): string {
-  return new Intl.DateTimeFormat('en-IN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(date))
+  }).format(new Date(date));
 }
 
 export function generateOrderId(): string {
-  const timestamp = Date.now().toString()
-  const random = Math.random().toString(36).substring(2, 8)
-  return `TB${timestamp}${random}`.toUpperCase()
+  return 'TB' + Date.now().toString() + Math.random().toString(36).substr(2, 5).toUpperCase();
 }
 
-export function generateTransactionId(): string {
-  const timestamp = Date.now().toString()
-  const random = Math.random().toString(36).substring(2, 8)
-  return `TXN${timestamp}${random}`.toUpperCase()
-}
+// Cloudinary helper functions
+export function getCloudinaryImageUrl(
+  publicId: string,
+  options: {
+    width?: number;
+    height?: number;
+    crop?: string;
+    quality?: string | number;
+    format?: string;
+  } = {}
+): string {
+  const {
+    width = 800,
+    height = 600,
+    crop = 'fill',
+    quality = 'auto',
+    format = 'auto',
+  } = options;
 
-export function validateEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(email)
-}
+  const baseUrl = `https://res.cloudinary.com/doudaqth/image/upload`;
+  const transformations = [];
 
-export function validatePhone(phone: string): boolean {
-  const phoneRegex = /^[6-9]\d{9}$/
-  return phoneRegex.test(phone)
-}
-
-export function validateGSTIN(gstin: string): boolean {
-  const gstinRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/
-  return gstinRegex.test(gstin)
-}
-
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
-export function calculateDiscountPercentage(originalPrice: number, discountPrice: number): number {
-  if (discountPrice >= originalPrice) return 0
-  return Math.round(((originalPrice - discountPrice) / originalPrice) * 100)
-}
-
-export function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  let timeoutId: NodeJS.Timeout
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => func(...args), delay)
+  if (width || height) {
+    transformations.push(`w_${width || 'auto'},h_${height || 'auto'},c_${crop}`);
   }
+  if (quality) {
+    transformations.push(`q_${quality}`);
+  }
+  if (format) {
+    transformations.push(`f_${format}`);
+  }
+
+  const transformationString = transformations.length > 0 ? `/${transformations.join(',')}` : '';
+  return `${baseUrl}${transformationString}/${publicId}`;
 }
 
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
+export function validateImageFile(file: File): { valid: boolean; error?: string } {
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  const maxSize = 5 * 1024 * 1024; // 5MB
+
+  if (!validTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: 'Invalid file type. Please upload a JPEG, PNG, or WebP image.',
+    };
+  }
+
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      error: 'File too large. Please upload an image under 5MB.',
+    };
+  }
+
+  return { valid: true };
 }
 
-export function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .substring(0, 2)
-}
-
-export function isValidUrl(url: string): boolean {
+// Email utility functions
+export async function sendEmailNotification(type: string, to: string, data: Record<string, unknown>) {
   try {
-    new URL(url)
-    return true
-  } catch {
-    return false
+    const response = await fetch('/api/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type,
+        to,
+        data,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send email');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Email sending error:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }
 
-export function getFileExtension(filename: string): string {
-  return filename.split('.').pop()?.toLowerCase() || ''
+export function generateResetToken(): string {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-export function isImageFile(filename: string): boolean {
-  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']
-  return imageExtensions.includes(getFileExtension(filename))
-}
-
-export function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
-}
-
-export function maskEmail(email: string): string {
-  const [username, domain] = email.split('@')
-  const maskedUsername = username.substring(0, 2) + '*'.repeat(username.length - 2)
-  return `${maskedUsername}@${domain}`
-}
-
-export function maskPhone(phone: string): string {
-  return phone.substring(0, 2) + '*'.repeat(phone.length - 4) + phone.substring(phone.length - 2)
+export function isValidEmailDomain(email: string): boolean {
+  // Add any domain restrictions here if needed
+  const blockedDomains = ['tempmail.com', '10minutemail.com', 'guerrillamail.com'];
+  const domain = email.split('@')[1]?.toLowerCase();
+  return domain ? !blockedDomains.includes(domain) : false;
 }

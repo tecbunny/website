@@ -1,33 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
-import { validateEmail, validatePhone } from '@/lib/utils'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
+// Mock user database (in production, use a real database like Supabase)
+const users = [
+  {
+    id: '1',
+    email: 'admin@tecbunny.com',
+    password: '$2a$10$rOvHBkN5zP.MxK2k4QJy9.9vqGq0QH8q5k2lBqF.6q5.3.4.5.6.7', // 'password123'
+    name: 'Admin User',
+    role: 'admin',
+    createdAt: new Date().toISOString()
+  }
+]
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, fullName, phone, role = 'customer' } = await request.json()
+    const { email, password, name, confirmPassword } = await request.json()
 
-    // Validation
-    if (!email || !password || !fullName) {
+    // Validate input
+    if (!email || !password || !name || !confirmPassword) {
       return NextResponse.json(
-        { error: 'Email, password, and full name are required' },
+        { error: 'All fields are required' },
         { status: 400 }
       )
     }
 
-    if (!validateEmail(email)) {
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: 'Invalid email format' },
+        { error: 'Please enter a valid email address' },
         { status: 400 }
       )
     }
 
-    if (phone && !validatePhone(phone)) {
-      return NextResponse.json(
-        { error: 'Invalid phone number format' },
-        { status: 400 }
-      )
-    }
-
+    // Validate password strength
     if (password.length < 8) {
       return NextResponse.json(
         { error: 'Password must be at least 8 characters long' },
@@ -35,94 +43,59 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single()
-
-    if (existingUser) {
+    // Check if passwords match
+    if (password !== confirmPassword) {
       return NextResponse.json(
-        { error: 'User already exists with this email' },
-        { status: 409 }
-      )
-    }
-
-    // Create user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone,
-          role
-        }
-      }
-    })
-
-    if (authError) {
-      return NextResponse.json(
-        { error: authError.message },
+        { error: 'Passwords do not match' },
         { status: 400 }
       )
     }
 
-    // Create user profile in database
-    if (authData.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert([
-          {
-            id: authData.user.id,
-            email,
-            full_name: fullName,
-            phone,
-            role,
-            is_verified: false
-          }
-        ])
-
-      if (profileError) {
-        console.error('Error creating user profile:', profileError)
-        return NextResponse.json(
-          { error: 'Failed to create user profile' },
-          { status: 500 }
-        )
-      }
-
-      // If vendor, create vendor profile
-      if (role === 'vendor') {
-        const { error: vendorError } = await supabase
-          .from('vendors')
-          .insert([
-            {
-              user_id: authData.user.id,
-              business_name: fullName,
-              is_approved: false,
-              commission_rate: 5.0 // Default 5%
-            }
-          ])
-
-        if (vendorError) {
-          console.error('Error creating vendor profile:', vendorError)
-        }
-      }
+    // Check if user already exists
+    const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase())
+    if (existingUser) {
+      return NextResponse.json(
+        { error: 'User with this email already exists' },
+        { status: 409 }
+      )
     }
 
-    return NextResponse.json(
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12)
+
+    // Create new user
+    const newUser = {
+      id: (users.length + 1).toString(),
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      name,
+      role: 'user',
+      createdAt: new Date().toISOString()
+    }
+
+    users.push(newUser)
+
+    // Create JWT token
+    const token = jwt.sign(
       { 
-        message: 'User registered successfully. Please check your email to verify your account.',
-        user: {
-          id: authData.user?.id,
-          email,
-          full_name: fullName,
-          role
-        }
+        userId: newUser.id,
+        email: newUser.email,
+        role: newUser.role 
       },
-      { status: 201 }
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
     )
+
+    // Return user data (without password)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = newUser
+
+    return NextResponse.json({
+      success: true,
+      user: userWithoutPassword,
+      token,
+      message: 'Account created successfully'
+    })
 
   } catch (error) {
     console.error('Registration error:', error)
