@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
@@ -94,10 +95,10 @@ function Footer() {
             © {new Date().getFullYear()} TecBunny Solutions. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <img src="/payment-visa.svg" alt="Visa" className="h-6 opacity-70" />
-            <img src="/payment-mastercard.svg" alt="Mastercard" className="h-6 opacity-70" />
-            <img src="/payment-paypal.svg" alt="PayPal" className="h-6 opacity-70" />
-            <img src="/payment-upi.svg" alt="UPI" className="h-6 opacity-70" />
+            <Image src="/payment-visa.svg" alt="Visa" width={24} height={24} className="h-6 w-auto opacity-70" />
+            <Image src="/payment-mastercard.svg" alt="Mastercard" width={24} height={24} className="h-6 w-auto opacity-70" />
+            <Image src="/payment-paypal.svg" alt="PayPal" width={24} height={24} className="h-6 w-auto opacity-70" />
+            <Image src="/payment-upi.svg" alt="UPI" width={24} height={24} className="h-6 w-auto opacity-70" />
           </div>
         </div>
       </div>

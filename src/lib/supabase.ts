@@ -23,8 +23,8 @@ export type UpdateTables<T extends keyof Database['public']['Tables']> = Databas
 
 // Helper function to handle Supabase errors
 export function handleSupabaseError(error: unknown) {
-  if (error?.message) {
-    return error.message
+  if (error && typeof error === 'object' && 'message' in error) {
+    return (error as { message: string }).message
   }
   return 'An unexpected error occurred'
 }

@@ -30,8 +30,8 @@ export function generateOrderId(): string {
 export function getCloudinaryImageUrl(
   publicId: string,
   options: {
-    width?: number;
-    height?: number;
+    width?: number | string;
+    height?: number | string;
     crop?: string;
     quality?: string | number;
     format?: string;
@@ -46,7 +46,7 @@ export function getCloudinaryImageUrl(
   } = options;
 
   const baseUrl = `https://res.cloudinary.com/doudaqth/image/upload`;
-  const transformations = [];
+  const transformations: string[] = [];
 
   if (width || height) {
     transformations.push(`w_${width || 'auto'},h_${height || 'auto'},c_${crop}`);
