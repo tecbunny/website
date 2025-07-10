@@ -4,6 +4,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { NextAuthProvider } from "@/contexts/NextAuthContext";
+import { ClientSessionProvider } from "@/components/ClientSessionProvider";
 import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
@@ -116,13 +118,17 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-b from-blue-50 to-white min-h-screen`}
       >
-        <AuthProvider>
-          <CartProvider>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-          </CartProvider>
-        </AuthProvider>
+        <ClientSessionProvider>
+          <NextAuthProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Navbar />
+                <main>{children}</main>
+                <Footer />
+              </CartProvider>
+            </AuthProvider>
+          </NextAuthProvider>
+        </ClientSessionProvider>
       </body>
     </html>
   );

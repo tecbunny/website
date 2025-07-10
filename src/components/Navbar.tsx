@@ -2,13 +2,31 @@
 import Link from "next/link";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNextAuth } from "@/contexts/NextAuthContext";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { Search, ShoppingCart, User, Menu, X, Heart, LogOut, Settings, Package } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export default function Navbar() {
   const { cart } = useCart();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user: authUser, isAuthenticated: authAuthenticated, logout: authLogout } = useAuth();
+  const { user: nextAuthUser, isAuthenticated: nextAuthAuthenticated, logout: nextAuthLogout } = useNextAuth();
+  const { data: session } = useSession();
+  
+  // Use NextAuth session if available, fallback to custom auth
+  const user = session?.user || nextAuthUser || authUser;
+  const isAuthenticated = !!session || nextAuthAuthenticated || authAuthenticated;
+  
+  const handleLogout = async () => {
+    if (session) {
+      await nextAuthLogout();
+    } else {
+      await authLogout();
+    }
+    setIsUserMenuOpen(false);
+  };
+  
   const pathname = usePathname();
   const [search, setSearch] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,10 +59,8 @@ export default function Navbar() {
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
-    setIsUserMenuOpen(false);
-  };
+  // Remove the duplicate handleLogout function
+  // It's already defined above
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md shadow-lg border-b border-blue-100">
