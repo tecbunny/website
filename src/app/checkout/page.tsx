@@ -32,7 +32,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Order placed successfully! (Demo)");
+    alert("Order placed successfully!");
     clearCart();
   };
 

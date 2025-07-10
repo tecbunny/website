@@ -163,15 +163,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
 
-        {/* Demo Credentials */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">Demo Credentials</h3>
-          <div className="text-sm text-blue-700 space-y-1">
-            <p><strong>Admin:</strong> admin@tecbunny.com / password123</p>
-            <p><strong>User:</strong> user@example.com / password123</p>
-          </div>
-        </div>
-
         {/* Alternative Login Options */}
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-600 mb-4">Or continue with</p>
