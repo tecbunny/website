@@ -218,16 +218,14 @@ export default function Navbar() {
             ) : (
               <div className="hidden md:flex items-center space-x-3">
                 <Link 
-                  href="#" 
-                  onClick={(e) => { e.preventDefault(); alert('Login coming soon!'); }}
+                  href="/auth/login"
                   className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors"
                 >
                   <User className="h-5 w-5" />
                   <span className="font-medium">Sign In</span>
                 </Link>
                 <Link 
-                  href="#" 
-                  onClick={(e) => { e.preventDefault(); alert('Signup coming soon!'); }}
+                  href="/auth/signup"
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium"
                 >
                   Sign Up
@@ -328,15 +326,15 @@ export default function Navbar() {
             ) : (
               <div className="border-t border-gray-200 mt-3 pt-3 space-y-2">
                 <Link
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); alert('Login coming soon!'); setIsMenuOpen(false); }}
+                  href="/auth/login"
+                  onClick={() => setIsMenuOpen(false)}
                   className="block py-2 font-medium text-gray-700 hover:text-blue-600"
                 >
                   Sign In
                 </Link>
                 <Link
-                  href="#"
-                  onClick={(e) => { e.preventDefault(); alert('Signup coming soon!'); setIsMenuOpen(false); }}
+                  href="/auth/signup"
+                  onClick={() => setIsMenuOpen(false)}
                   className="block py-2 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium text-center"
                 >
                   Sign Up
