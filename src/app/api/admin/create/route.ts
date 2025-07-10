@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import { validateEmail } from '@/lib/utils'
+import bcrypt from 'bcryptjs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,54 +43,41 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create admin user in Supabase Auth
-    const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: {
-        full_name: fullName,
-        role: 'admin'
-      },
-      email_confirm: true
-    })
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 12)
 
-    if (authError) {
+    // Create admin user in database
+    const { data: userData, error: userError } = await supabaseAdmin
+      .from('users')
+      .insert([
+        {
+          email,
+          name: fullName,
+          password_hash: passwordHash,
+          role: 'admin',
+          provider: 'email',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ])
+      .select()
+      .single()
+
+    if (userError) {
+      console.error('Error creating admin user:', userError)
       return NextResponse.json(
-        { error: authError.message },
-        { status: 400 }
+        { error: 'Failed to create admin user' },
+        { status: 500 }
       )
-    }
-
-    // Create admin profile in database
-    if (authData.user) {
-      const { error: profileError } = await supabaseAdmin
-        .from('users')
-        .insert([
-          {
-            id: authData.user.id,
-            email,
-            full_name: fullName,
-            role: 'admin',
-            is_verified: true
-          }
-        ])
-
-      if (profileError) {
-        console.error('Error creating admin profile:', profileError)
-        return NextResponse.json(
-          { error: 'Failed to create admin profile' },
-          { status: 500 }
-        )
-      }
     }
 
     return NextResponse.json(
       { 
         message: 'Admin user created successfully',
         user: {
-          id: authData.user?.id,
+          id: userData.id,
           email,
-          full_name: fullName,
+          name: fullName,
           role: 'admin'
         }
       },
