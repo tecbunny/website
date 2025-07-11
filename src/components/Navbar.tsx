@@ -45,7 +45,8 @@ export default function Navbar() {
     { href: "/products?cat=personal", label: "Personal" },
     ...(user?.role === 'admin' ? [
       { href: "/admin/crm", label: "Admin CRM" },
-      { href: "/admin/homepage-editor", label: "Homepage Editor" }
+      { href: "/admin/homepage-editor", label: "Homepage Editor" },
+      { href: "/admin/products", label: "Product Manager" }
     ] : []),
   ];
 

@@ -162,7 +162,7 @@ export default function HomepageSettingsPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Homepage Settings</h1>
-              <p className="text-gray-600 mt-2">Customize your website's homepage appearance</p>
+              <p className="text-gray-600 mt-2">Customize your website&apos;s homepage appearance</p>
             </div>
             <div className="flex space-x-4">
               <Link href="/" target="_blank">

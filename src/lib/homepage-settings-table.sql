@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.homepage_settings (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   site_name VARCHAR(255) DEFAULT 'TecBunny' NOT NULL,
   logo_url TEXT,
+  logo_public_id VARCHAR(255), -- Cloudinary public ID for logo management
   banner_title VARCHAR(500) DEFAULT 'Premium Tech Accessories' NOT NULL,
   banner_subtitle VARCHAR(1000) DEFAULT 'Discover the latest in technology accessories with unbeatable prices, premium quality, and lightning-fast delivery across India.' NOT NULL,
   banner_background_color VARCHAR(100) DEFAULT 'from-blue-600 via-blue-500 to-purple-600' NOT NULL,

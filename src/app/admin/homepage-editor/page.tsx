@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Save, Upload, Eye, Settings, Palette, Type, Image } from 'lucide-react';
+import { Save, Upload, Eye, Settings, Palette, Type, Image, X } from 'lucide-react';
 
 interface HomepageSettings {
   id?: string;
   site_name: string;
   logo_url: string | null;
+  logo_public_id?: string | null;
   banner_title: string;
   banner_subtitle: string;
   banner_background_color: string;
@@ -83,23 +84,51 @@ export default function HomepageEditor() {
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!validTypes.includes(file.type)) {
+        setMessage({ type: 'error', text: 'Invalid file type. Please upload a JPEG, PNG, or WebP image.' });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        setMessage({ type: 'error', text: 'File too large. Please upload an image under 5MB.' });
+        return;
+      }
+
       setLogoFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setLogoPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+      setMessage(null); // Clear any previous errors
     }
   };
 
-  const uploadLogo = async (): Promise<string | null> => {
-    if (!logoFile) return settings.logo_url;
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setSettings(prev => ({ ...prev, logo_url: null, logo_public_id: null }));
+  };
+
+  const uploadLogo = async (): Promise<{ url: string | null; public_id: string | null }> => {
+    if (!logoFile) return { url: settings.logo_url, public_id: settings.logo_public_id || null };
 
     const formData = new FormData();
     formData.append('file', logoFile);
-    formData.append('type', 'logo');
+    formData.append('type', 'logo'); // This will organize it in website-portal-media folder
 
     try {
+      // Delete old logo if it exists
+      if (settings.logo_public_id) {
+        await fetch(`/api/upload?publicId=${encodeURIComponent(settings.logo_public_id)}`, {
+          method: 'DELETE'
+        });
+      }
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData
@@ -107,12 +136,12 @@ export default function HomepageEditor() {
       
       if (response.ok) {
         const data = await response.json();
-        return data.url;
+        return { url: data.url, public_id: data.public_id };
       }
     } catch (error) {
       console.error('Error uploading logo:', error);
     }
-    return null;
+    return { url: null, public_id: null };
   };
 
   const handleSave = async () => {
@@ -121,11 +150,12 @@ export default function HomepageEditor() {
     
     try {
       // Upload logo if changed
-      const logoUrl = await uploadLogo();
+      const logoResult = await uploadLogo();
       
       const settingsToSave = {
         ...settings,
-        logo_url: logoUrl
+        logo_url: logoResult.url,
+        logo_public_id: logoResult.public_id
       };
 
       const response = await fetch('/api/admin/homepage-settings', {
@@ -228,7 +258,7 @@ export default function HomepageEditor() {
                   <input
                     id="logo"
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={handleLogoUpload}
                     className="hidden"
                   />
@@ -242,11 +272,25 @@ export default function HomepageEditor() {
                     Upload Logo
                   </Button>
                   {logoPreview && (
-                    <div className="w-16 h-16 border border-gray-300 rounded-lg overflow-hidden">
-                      <img src={logoPreview} alt="Logo preview" className="w-full h-full object-contain" />
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-16 border border-gray-300 rounded-lg overflow-hidden">
+                        <img src={logoPreview} alt="Logo preview" className="w-full h-full object-contain" />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removeLogo}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   )}
                 </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Recommended: 200x200px, JPEG/PNG/WebP, max 5MB
+                </p>
               </div>
             </CardContent>
           </Card>

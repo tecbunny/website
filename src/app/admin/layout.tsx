@@ -10,7 +10,8 @@ import {
   Settings,
   Menu,
   X,
-  Home
+  Home,
+  Edit
 } from "lucide-react";
 
 const adminNavItems = [
@@ -19,6 +20,7 @@ const adminNavItems = [
   { href: "/admin/crm/communications", label: "Communications", icon: Mail },
   { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/products", label: "Products", icon: ShoppingBag },
+  { href: "/admin/homepage-editor", label: "Homepage Editor", icon: Edit },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

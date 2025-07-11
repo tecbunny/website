@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="routerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="antennaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#374151;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4b5563;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="150" cy="260" rx="80" ry="15" fill="#e2e8f0" opacity="0.5"/>
+  
+  <!-- Router base -->
+  <rect x="80" y="180" width="140" height="60" rx="8" fill="url(#routerGrad)"/>
+  
+  <!-- Router top -->
+  <rect x="85" y="175" width="130" height="10" rx="5" fill="#4b5563"/>
+  
+  <!-- Antennas -->
+  <rect x="70" y="80" width="6" height="100" rx="3" fill="url(#antennaGrad)"/>
+  <rect x="90" y="70" width="6" height="110" rx="3" fill="url(#antennaGrad)"/>
+  <rect x="204" y="70" width="6" height="110" rx="3" fill="url(#antennaGrad)"/>
+  <rect x="224" y="80" width="6" height="100" rx="3" fill="url(#antennaGrad)"/>
+  
+  <!-- Antenna tips -->
+  <rect x="68" y="75" width="10" height="5" rx="5" fill="#6b7280"/>
+  <rect x="88" y="65" width="10" height="5" rx="5" fill="#6b7280"/>
+  <rect x="202" y="65" width="10" height="5" rx="5" fill="#6b7280"/>
+  <rect x="222" y="75" width="10" height="5" rx="5" fill="#6b7280"/>
+  
+  <!-- Status LEDs -->
+  <circle cx="100" cy="200" r="3" fill="#10b981"/>
+  <circle cx="110" cy="200" r="3" fill="#10b981"/>
+  <circle cx="120" cy="200" r="3" fill="#f59e0b"/>
+  <circle cx="130" cy="200" r="3" fill="#3b82f6"/>
+  
+  <!-- Brand logo -->
+  <rect x="140" y="190" width="40" height="15" rx="2" fill="#4b5563"/>
+  <text x="160" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#ffffff" font-weight="bold">ROUTER</text>
+  
+  <!-- Ethernet ports -->
+  <rect x="185" y="215" width="30" height="8" rx="1" fill="#6b7280"/>
+  <rect x="187" y="217" width="6" height="4" rx="1" fill="#374151"/>
+  <rect x="195" y="217" width="6" height="4" rx="1" fill="#374151"/>
+  <rect x="203" y="217" width="6" height="4" rx="1" fill="#374151"/>
+  <rect x="211" y="217" width="6" height="4" rx="1" fill="#374151"/>
+  
+  <!-- Power port -->
+  <circle cx="105" cy="225" r="4" fill="#374151"/>
+  <circle cx="105" cy="225" r="2" fill="#1f2937"/>
+  
+  <!-- WiFi symbol -->
+  <path d="M150 140 Q160 130 170 140" stroke="#10b981" stroke-width="3" fill="none"/>
+  <path d="M145 145 Q150 135 155 145" stroke="#10b981" stroke-width="2" fill="none"/>
+  <circle cx="150" cy="150" r="2" fill="#10b981"/>
+  
+  <!-- Speed indicator -->
+  <rect x="50" y="100" width="40" height="20" rx="10" fill="#ef4444"/>
+  <text x="70" y="113" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#ffffff" font-weight="bold">AX3000</text>
+  
+  <!-- Product name -->
+  <text x="150" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1f2937" font-weight="bold">Gaming Router X1</text>
+</svg>

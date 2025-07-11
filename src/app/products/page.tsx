@@ -1,144 +1,71 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Filter, Search, Grid, List } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
-// Mock products data
-const mockProducts = [
-  {
-    id: "1",
-    name: "Wireless Gaming Mouse Pro",
-    description: "High-precision wireless gaming mouse with RGB lighting",
-    price: 2999,
-    originalPrice: 3499,
-    image: "/api/placeholder/300/300",
-    category: "computer",
-    rating: 4.5,
-    reviews: 128,
-    inStock: true,
-    brand: "TechPro",
-    features: ["Wireless", "RGB Lighting", "Gaming", "Ergonomic"]
-  },
-  {
-    id: "2",
-    name: "Mechanical Keyboard RGB",
-    description: "Backlit mechanical keyboard with blue switches",
-    price: 4999,
-    originalPrice: 5999,
-    image: "/api/placeholder/300/300",
-    category: "computer",
-    rating: 4.7,
-    reviews: 89,
-    inStock: true,
-    brand: "KeyMaster",
-    features: ["Mechanical", "RGB", "Blue Switches", "Gaming"]
-  },
-  {
-    id: "3",
-    name: "4K Webcam Pro",
-    description: "Ultra HD webcam with auto-focus and noise cancellation",
-    price: 6999,
-    originalPrice: 8999,
-    image: "/api/placeholder/300/300",
-    category: "computer",
-    rating: 4.6,
-    reviews: 156,
-    inStock: true,
-    brand: "WebCam+",
-    features: ["4K", "Auto Focus", "Noise Cancellation", "USB-C"]
-  },
-  {
-    id: "4",
-    name: "WiFi 6 Router AC3000",
-    description: "High-speed WiFi 6 router with advanced security",
-    price: 12999,
-    originalPrice: 15999,
-    image: "/api/placeholder/300/300",
-    category: "network",
-    rating: 4.8,
-    reviews: 234,
-    inStock: true,
-    brand: "NetSpeed",
-    features: ["WiFi 6", "AC3000", "Security", "Mesh Ready"]
-  },
-  {
-    id: "5",
-    name: "USB-C Hub 7-in-1",
-    description: "Multi-port USB-C hub with HDMI, USB 3.0, and charging",
-    price: 3499,
-    originalPrice: 4199,
-    image: "/api/placeholder/300/300",
-    category: "computer",
-    rating: 4.4,
-    reviews: 67,
-    inStock: true,
-    brand: "HubMax",
-    features: ["7 Ports", "HDMI", "USB 3.0", "Fast Charging"]
-  },
-  {
-    id: "6",
-    name: "Wireless Earbuds Pro",
-    description: "Premium wireless earbuds with active noise cancellation",
-    price: 8999,
-    originalPrice: 11999,
-    image: "/api/placeholder/300/300",
-    category: "mobile",
-    rating: 4.7,
-    reviews: 345,
-    inStock: true,
-    brand: "AudioTech",
-    features: ["ANC", "Wireless", "Premium", "Long Battery"]
-  },
-  {
-    id: "7",
-    name: "Smartphone Stand Adjustable",
-    description: "Adjustable phone stand for desk and video calls",
-    price: 1299,
-    originalPrice: 1799,
-    image: "/api/placeholder/300/300",
-    category: "mobile",
-    rating: 4.3,
-    reviews: 89,
-    inStock: true,
-    brand: "StandPro",
-    features: ["Adjustable", "Stable", "Portable", "Universal"]
-  },
-  {
-    id: "8",
-    name: "Portable Power Bank 20000mAh",
-    description: "High-capacity power bank with fast charging support",
-    price: 2599,
-    originalPrice: 3299,
-    image: "/api/placeholder/300/300",
-    category: "mobile",
-    rating: 4.6,
-    reviews: 178,
-    inStock: true,
-    brand: "PowerMax",
-    features: ["20000mAh", "Fast Charge", "Portable", "Multiple Ports"]
-  }
-];
-
-const categories = [
-  { id: "all", name: "All Products", count: mockProducts.length },
-  { id: "computer", name: "Computer Accessories", count: mockProducts.filter(p => p.category === "computer").length },
-  { id: "network", name: "Networking", count: mockProducts.filter(p => p.category === "network").length },
-  { id: "mobile", name: "Mobile Accessories", count: mockProducts.filter(p => p.category === "mobile").length },
-];
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  original_price: number;
+  image: string;
+  category: string;
+  rating: number;
+  reviews: number;
+  in_stock: boolean;
+  brand: string;
+  features: string[];
+}
 
 export default function ProductsPage() {
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts);
+  const { addToCart } = useCart();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("name");
-  const [priceRange, setPriceRange] = useState([0, 20000]);
-  const { addToCart } = useCart();
+
+  const categories = [
+    { id: "all", name: "All Products", count: 0 },
+    { id: "computer", name: "Computer Accessories", count: 0 },
+    { id: "network", name: "Networking", count: 0 },
+    { id: "mobile", name: "Mobile Accessories", count: 0 },
+    { id: "personal", name: "Personal Goods", count: 0 },
+  ];
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await fetch('/api/admin/products');
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+        setFilteredProducts(data);
+        
+        // Update category counts
+        categories.forEach(cat => {
+          cat.count = cat.id === 'all' ? data.length : data.filter((p: Product) => p.category === cat.id).length;
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let filtered = mockProducts;
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const [priceRange, setPriceRange] = useState([0, 20000]);
+
+  useEffect(() => {
+    let filtered = products;
 
     // Filter by category
     if (selectedCategory !== "all") {
@@ -146,10 +73,10 @@ export default function ProductsPage() {
     }
 
     // Filter by search query
-    if (searchQuery) {
+    if (searchTerm) {
       filtered = filtered.filter(product => 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -174,9 +101,9 @@ export default function ProductsPage() {
     });
 
     setFilteredProducts(filtered);
-  }, [selectedCategory, searchQuery, priceRange, sortBy]);
+  }, [selectedCategory, searchTerm, priceRange, sortBy, products]);
 
-  const handleAddToCart = (product: typeof mockProducts[0]) => {
+  const handleAddToCart = (product: Product) => {
     addToCart({
       id: product.id,
       name: product.name,
@@ -203,8 +130,8 @@ export default function ProductsPage() {
               <input
                 type="text"
                 placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -284,7 +211,7 @@ export default function ProductsPage() {
             {/* View Toggle */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-sm text-gray-600">
-                Showing {filteredProducts.length} of {mockProducts.length} products
+                Showing {filteredProducts.length} of {products.length} products
               </p>
               <div className="flex items-center gap-2">
                 <button
@@ -303,7 +230,11 @@ export default function ProductsPage() {
             </div>
 
             {/* Products */}
-            {filteredProducts.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">Loading products...</p>
+              </div>
+            ) : filteredProducts.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
               </div>
@@ -350,8 +281,8 @@ export default function ProductsPage() {
 
                           <div className="flex items-center gap-2 mb-3">
                             <span className="text-lg font-bold text-gray-900">₹{product.price.toLocaleString()}</span>
-                            {product.originalPrice && (
-                              <span className="text-sm text-gray-500 line-through">₹{product.originalPrice.toLocaleString()}</span>
+                            {product.original_price && product.original_price > product.price && (
+                              <span className="text-sm text-gray-500 line-through">₹{product.original_price.toLocaleString()}</span>
                             )}
                           </div>
 

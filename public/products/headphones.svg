@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="headphoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="driverGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4b5563;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1f2937;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="150" cy="270" rx="80" ry="15" fill="#e2e8f0" opacity="0.5"/>
+  
+  <!-- Headband -->
+  <path d="M80 120 Q150 80 220 120" stroke="url(#headphoneGrad)" stroke-width="15" fill="none"/>
+  
+  <!-- Headband padding -->
+  <path d="M100 105 Q150 90 200 105" stroke="#4b5563" stroke-width="8" fill="none"/>
+  
+  <!-- Left ear cup -->
+  <circle cx="90" cy="150" r="35" fill="url(#headphoneGrad)"/>
+  <circle cx="90" cy="150" r="28" fill="url(#driverGrad)"/>
+  <circle cx="90" cy="150" r="20" fill="#1f2937"/>
+  
+  <!-- Right ear cup -->
+  <circle cx="210" cy="150" r="35" fill="url(#headphoneGrad)"/>
+  <circle cx="210" cy="150" r="28" fill="url(#driverGrad)"/>
+  <circle cx="210" cy="150" r="20" fill="#1f2937"/>
+  
+  <!-- Adjustment sliders -->
+  <rect x="85" y="110" width="10" height="25" rx="5" fill="#6b7280"/>
+  <rect x="205" y="110" width="10" height="25" rx="5" fill="#6b7280"/>
+  
+  <!-- Brand logo -->
+  <rect x="140" y="85" width="20" height="8" rx="2" fill="#3b82f6"/>
+  <text x="150" y="91" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#ffffff" font-weight="bold">AUDIO</text>
+  
+  <!-- Driver details -->
+  <circle cx="90" cy="150" r="12" fill="#374151"/>
+  <circle cx="210" cy="150" r="12" fill="#374151"/>
+  <text x="90" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#ffffff" font-weight="bold">L</text>
+  <text x="210" y="155" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#ffffff" font-weight="bold">R</text>
+  
+  <!-- Control buttons -->
+  <circle cx="85" cy="180" r="4" fill="#4b5563"/>
+  <circle cx="95" cy="180" r="4" fill="#4b5563"/>
+  <circle cx="90" cy="190" r="4" fill="#ef4444"/>
+  
+  <!-- Microphone -->
+  <rect x="70" y="160" width="15" height="3" rx="1.5" fill="#6b7280"/>
+  <circle cx="65" cy="161.5" r="2" fill="#374151"/>
+  
+  <!-- Noise cancellation indicator -->
+  <rect x="190" y="100" width="25" height="12" rx="6" fill="#10b981"/>
+  <text x="202.5" y="108" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#ffffff" font-weight="bold">NC</text>
+  
+  <!-- Product name -->
+  <text x="150" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1f2937" font-weight="bold">Wireless Headphones</text>
+</svg>

@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="keyboardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="keyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4b5563;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6b7280;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="150" cy="260" rx="120" ry="15" fill="#e2e8f0" opacity="0.5"/>
+  
+  <!-- Keyboard base -->
+  <rect x="30" y="140" width="240" height="100" rx="10" fill="url(#keyboardGrad)"/>
+  
+  <!-- Keyboard keys row 1 -->
+  <rect x="45" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="65" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="85" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="105" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="125" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="145" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="165" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="185" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="205" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="225" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="245" y="155" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  
+  <!-- Keyboard keys row 2 -->
+  <rect x="45" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="65" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="85" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="105" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="125" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="145" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="165" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="185" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="205" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="225" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="245" y="175" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  
+  <!-- Keyboard keys row 3 -->
+  <rect x="45" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="65" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="85" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="105" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="125" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="145" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="165" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="185" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="205" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="225" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  <rect x="245" y="195" width="15" height="15" rx="2" fill="url(#keyGrad)"/>
+  
+  <!-- Spacebar -->
+  <rect x="105" y="215" width="90" height="15" rx="2" fill="url(#keyGrad)"/>
+  
+  <!-- RGB lighting effects -->
+  <rect x="45" y="155" width="15" height="15" rx="2" fill="#ef4444" opacity="0.5"/>
+  <rect x="85" y="155" width="15" height="15" rx="2" fill="#10b981" opacity="0.5"/>
+  <rect x="125" y="155" width="15" height="15" rx="2" fill="#3b82f6" opacity="0.5"/>
+  <rect x="165" y="155" width="15" height="15" rx="2" fill="#8b5cf6" opacity="0.5"/>
+  <rect x="205" y="155" width="15" height="15" rx="2" fill="#f59e0b" opacity="0.5"/>
+  
+  <!-- USB cable -->
+  <rect x="280" y="160" width="15" height="6" rx="3" fill="#4b5563"/>
+  <rect x="290" y="162" width="8" height="2" rx="1" fill="#6b7280"/>
+  
+  <!-- Product name -->
+  <text x="150" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1f2937" font-weight="bold">Mechanical Keyboard RGB</text>
+</svg>

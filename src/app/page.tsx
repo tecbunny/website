@@ -1,21 +1,19 @@
 "use client";
+import { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { Star, Truck, Shield, Headphones, ArrowRight } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import { useHomepageSettings } from "@/hooks/useHomepageSettings";
+import { Database } from '@/types/database';
+
+type Product = Database['public']['Tables']['products']['Row'];
 
 const categories = [
   { name: "Computer Accessories", icon: "/computer.svg", href: "/products?cat=computer", count: "500+ Items" },
   { name: "Networking Devices", icon: "/network.svg", href: "/products?cat=network", count: "200+ Items" },
   { name: "Mobile Accessories", icon: "/mobile.svg", href: "/products?cat=mobile", count: "800+ Items" },
   { name: "Personal Goods", icon: "/personal.svg", href: "/products?cat=personal", count: "300+ Items" },
-];
-
-const featuredProducts = [
-  { id: "1", name: "Wireless Mouse Pro", price: 799, originalPrice: 999, image: "/computer.svg", rating: 4.5 },
-  { id: "2", name: "Gaming Router X1", price: 1999, originalPrice: 2499, image: "/network.svg", rating: 4.8 },
-  { id: "3", name: "AirPods Pro Max", price: 1499, originalPrice: 1799, image: "/mobile.svg", rating: 4.7 },
 ];
 
 const testimonials = [
@@ -27,6 +25,38 @@ const testimonials = [
 export default function Home() {
   const { addToCart } = useCart();
   const { settings, isLoading } = useHomepageSettings();
+  const [featuredProducts, setFeaturedProducts] = useState<{ id: string; name: string; price: number; originalPrice?: number; image: string; rating: number }[]>([]);
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await fetch('/api/admin/products');
+        if (response.ok) {
+          const products = await response.json();
+          // Take first 3 products as featured
+          const featured = products.slice(0, 3).map((p: Product) => ({
+            id: p.id,
+            name: p.name,
+            price: Math.floor(p.price / 100), // Convert from paise to rupees
+            originalPrice: p.original_price ? Math.floor(p.original_price / 100) : undefined,
+            image: p.image,
+            rating: p.rating
+          }));
+          setFeaturedProducts(featured);
+        }
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
+        // Fallback to static products
+        setFeaturedProducts([
+          { id: "1", name: "Wireless Mouse Pro", price: 799, originalPrice: 999, image: "/products/gaming-mouse.svg", rating: 4.5 },
+          { id: "2", name: "Gaming Router X1", price: 1999, originalPrice: 2499, image: "/products/router.svg", rating: 4.8 },
+          { id: "3", name: "AirPods Pro Max", price: 1499, originalPrice: 1799, image: "/products/airpods.svg", rating: 4.7 },
+        ]);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
 
   const handleAddToCart = (product: { id: string; name: string; price: number; originalPrice?: number; image: string; rating: number }) => {
     addToCart({

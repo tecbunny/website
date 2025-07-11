@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="speakerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="driverGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#6b7280;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1f2937;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="150" cy="270" rx="70" ry="12" fill="#e2e8f0" opacity="0.5"/>
+  
+  <!-- Speaker body -->
+  <rect x="80" y="100" width="140" height="120" rx="20" fill="url(#speakerGrad)"/>
+  
+  <!-- Speaker grille -->
+  <rect x="90" y="110" width="120" height="100" rx="10" fill="#1f2937"/>
+  
+  <!-- Main driver -->
+  <circle cx="150" cy="140" r="25" fill="url(#driverGrad)"/>
+  <circle cx="150" cy="140" r="18" fill="#374151"/>
+  <circle cx="150" cy="140" r="12" fill="#1f2937"/>
+  
+  <!-- Tweeter -->
+  <circle cx="150" cy="180" r="12" fill="url(#driverGrad)"/>
+  <circle cx="150" cy="180" r="8" fill="#374151"/>
+  <circle cx="150" cy="180" r="5" fill="#1f2937"/>
+  
+  <!-- Grille pattern -->
+  <circle cx="120" cy="130" r="2" fill="#4b5563"/>
+  <circle cx="180" cy="130" r="2" fill="#4b5563"/>
+  <circle cx="120" cy="150" r="2" fill="#4b5563"/>
+  <circle cx="180" cy="150" r="2" fill="#4b5563"/>
+  <circle cx="120" cy="170" r="2" fill="#4b5563"/>
+  <circle cx="180" cy="170" r="2" fill="#4b5563"/>
+  <circle cx="120" cy="190" r="2" fill="#4b5563"/>
+  <circle cx="180" cy="190" r="2" fill="#4b5563"/>
+  
+  <!-- Control buttons -->
+  <circle cx="100" cy="235" r="6" fill="#4b5563"/>
+  <circle cx="120" cy="235" r="6" fill="#4b5563"/>
+  <circle cx="140" cy="235" r="6" fill="#4b5563"/>
+  
+  <!-- Volume buttons -->
+  <circle cx="180" cy="235" r="6" fill="#4b5563"/>
+  <circle cx="200" cy="235" r="6" fill="#4b5563"/>
+  
+  <!-- Power button -->
+  <circle cx="160" cy="235" r="8" fill="#ef4444"/>
+  
+  <!-- Brand logo -->
+  <rect x="140" y="115" width="20" height="8" rx="2" fill="#3b82f6"/>
+  <text x="150" y="121" text-anchor="middle" font-family="Arial, sans-serif" font-size="6" fill="#ffffff" font-weight="bold">SOUND</text>
+  
+  <!-- Bluetooth indicator -->
+  <circle cx="220" cy="120" r="3" fill="#3b82f6"/>
+  <path d="M215 115 Q220 110 225 115" stroke="#3b82f6" stroke-width="2" fill="none"/>
+  
+  <!-- Bass port -->
+  <rect x="70" y="160" width="8" height="30" rx="4" fill="#374151"/>
+  <rect x="222" y="160" width="8" height="30" rx="4" fill="#374151"/>
+  
+  <!-- Wireless symbol -->
+  <path d="M150 90 Q160 80 170 90" stroke="#10b981" stroke-width="3" fill="none"/>
+  <path d="M145 85 Q150 75 155 85" stroke="#10b981" stroke-width="2" fill="none"/>
+  <circle cx="150" cy="85" r="2" fill="#10b981"/>
+  
+  <!-- Product name -->
+  <text x="150" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1f2937" font-weight="bold">Bluetooth Speaker</text>
+</svg>

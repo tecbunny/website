@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="caseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#374151;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="phoneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="300" height="300" fill="#f8fafc"/>
+  
+  <!-- Shadow -->
+  <ellipse cx="150" cy="270" rx="50" ry="10" fill="#e2e8f0" opacity="0.5"/>
+  
+  <!-- Phone (inside case) -->
+  <rect x="105" y="70" width="90" height="180" rx="20" fill="url(#phoneGrad)"/>
+  
+  <!-- Phone case -->
+  <rect x="100" y="65" width="100" height="190" rx="25" fill="url(#caseGrad)" opacity="0.8"/>
+  
+  <!-- Case cutouts -->
+  <!-- Screen cutout -->
+  <rect x="110" y="85" width="80" height="150" rx="15" fill="url(#phoneGrad)"/>
+  
+  <!-- Camera cutout -->
+  <rect x="150" y="75" width="30" height="12" rx="6" fill="url(#phoneGrad)"/>
+  <circle cx="155" cy="81" r="4" fill="#1f2937"/>
+  <circle cx="170" cy="81" r="4" fill="#1f2937"/>
+  
+  <!-- Speaker cutout -->
+  <rect x="125" y="245" width="50" height="3" rx="1.5" fill="url(#phoneGrad)"/>
+  
+  <!-- Charging port cutout -->
+  <rect x="145" y="250" width="10" height="4" rx="2" fill="url(#phoneGrad)"/>
+  
+  <!-- Volume buttons -->
+  <rect x="97" y="120" width="3" height="15" rx="1.5" fill="#6b7280"/>
+  <rect x="97" y="140" width="3" height="15" rx="1.5" fill="#6b7280"/>
+  
+  <!-- Power button -->
+  <rect x="200" y="130" width="3" height="12" rx="1.5" fill="#6b7280"/>
+  
+  <!-- Case texture -->
+  <rect x="105" y="70" width="90" height="5" rx="2.5" fill="#6b7280" opacity="0.3"/>
+  <rect x="105" y="250" width="90" height="5" rx="2.5" fill="#6b7280" opacity="0.3"/>
+  
+  <!-- Brand logo on case -->
+  <rect x="140" y="240" width="20" height="6" rx="3" fill="#4b5563"/>
+  <text x="150" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="5" fill="#ffffff" font-weight="bold">CASE</text>
+  
+  <!-- Protection level -->
+  <rect x="200" y="90" width="30" height="15" rx="7" fill="#10b981"/>
+  <text x="215" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#ffffff" font-weight="bold">360°</text>
+  
+  <!-- Screen protector -->
+  <rect x="110" y="85" width="80" height="150" rx="15" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+  
+  <!-- Product name -->
+  <text x="150" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#1f2937" font-weight="bold">Phone Case Premium</text>
+</svg>

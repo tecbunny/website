@@ -5,13 +5,37 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File
-    const folder = formData.get('folder') as string || 'tecbunny'
+    const type = formData.get('type') as string || 'general'
+    const productId = formData.get('productId') as string || null
 
     if (!file) {
       return NextResponse.json(
         { error: 'No file provided' },
         { status: 400 }
       )
+    }
+
+    // Determine folder based on type
+    let folder = 'tecbunny'
+    switch (type) {
+      case 'logo':
+      case 'banner':
+      case 'website':
+        folder = 'tecbunny/website-portal-media'
+        break
+      case 'product':
+        if (productId) {
+          folder = `tecbunny/product-media/${productId}`
+        } else {
+          folder = 'tecbunny/product-media/general'
+        }
+        break
+      case 'avatar':
+      case 'profile':
+        folder = 'tecbunny/user-media'
+        break
+      default:
+        folder = 'tecbunny/general'
     }
 
     // Validate file type and size
@@ -36,16 +60,50 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
 
+    // Upload to Cloudinary with appropriate transformations based on type
+    interface CloudinaryTransformation {
+      width?: number;
+      height?: number;
+      crop?: string;
+      quality?: string;
+      format?: string;
+    }
+    
+    let transformations: CloudinaryTransformation[] = []
+    
+    switch (type) {
+      case 'logo':
+        transformations = [
+          { width: 400, height: 400, crop: 'limit' },
+          { quality: 'auto', format: 'auto' }
+        ]
+        break
+      case 'banner':
+        transformations = [
+          { width: 1920, height: 800, crop: 'limit' },
+          { quality: 'auto', format: 'auto' }
+        ]
+        break
+      case 'product':
+        transformations = [
+          { width: 800, height: 800, crop: 'limit' },
+          { quality: 'auto', format: 'auto' }
+        ]
+        break
+      default:
+        transformations = [
+          { width: 1200, height: 1200, crop: 'limit' },
+          { quality: 'auto', format: 'auto' }
+        ]
+    }
+
     // Upload to Cloudinary
     const uploadResult = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
           folder,
           resource_type: 'image',
-          transformation: [
-            { width: 1200, height: 1200, crop: 'limit' },
-            { quality: 'auto', format: 'auto' }
-          ]
+          transformation: transformations
         },
         (error, result) => {
           if (error) reject(error)

@@ -4,6 +4,7 @@ interface HomepageSettings {
   id?: string;
   site_name: string;
   logo_url: string | null;
+  logo_public_id?: string | null;
   banner_title: string;
   banner_subtitle: string;
   banner_background_color: string;

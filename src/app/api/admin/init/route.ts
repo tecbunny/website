@@ -1,42 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createDefaultAdmin } from '@/lib/create-admin'
+import { NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    // Add a simple security check - you might want to remove this in production
-    const { initKey } = await request.json()
-    
-    if (initKey !== 'init-tecbunny-admin-2024') {
-      return NextResponse.json(
-        { error: 'Invalid initialization key' },
-        { status: 401 }
-      )
-    }
-
-    const admin = await createDefaultAdmin()
-
     return NextResponse.json(
       { 
-        message: 'Default admin created successfully',
-        admin: {
-          id: admin.id,
-          email: admin.email,
-          name: admin.name,
-          role: admin.role
-        },
-        credentials: {
-          email: 'admin@tecbunny.store',
-          password: 'TecBunny@Admin2024',
-          warning: 'Please change the default password after first login!'
-        }
+        message: 'Admin initialization is no longer needed. Please use the OTP-based registration at /admin/register',
+        redirect: '/admin/register'
       },
-      { status: 201 }
+      { status: 200 }
     )
-
   } catch (error) {
-    console.error('Admin initialization error:', error)
+    console.error('Init error:', error)
     return NextResponse.json(
-      { error: 'Failed to initialize admin' },
+      { error: 'Failed to initialize', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }

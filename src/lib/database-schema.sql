@@ -59,18 +59,22 @@ CREATE TABLE IF NOT EXISTS public.orders (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create products table
+-- Create products table for e-commerce
 CREATE TABLE IF NOT EXISTS public.products (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
-  description TEXT,
-  price DECIMAL(10,2) NOT NULL,
-  category VARCHAR(100),
-  sku VARCHAR(100) UNIQUE,
-  stock_quantity INTEGER DEFAULT 0,
-  images JSONB,
-  specifications JSONB,
-  is_active BOOLEAN DEFAULT true,
+  description TEXT NOT NULL,
+  price INTEGER NOT NULL, -- Price in paise (₹1 = 100 paise)
+  original_price INTEGER, -- Original price for showing discounts
+  image TEXT, -- Cloudinary URL
+  image_public_id VARCHAR(255), -- Cloudinary public ID for image management
+  category VARCHAR(100) NOT NULL,
+  rating DECIMAL(2,1) DEFAULT 4.5,
+  reviews INTEGER DEFAULT 0,
+  in_stock BOOLEAN DEFAULT true,
+  brand VARCHAR(100),
+  features TEXT[], -- Array of feature strings
+  created_by UUID REFERENCES public.users(id),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -91,6 +95,7 @@ CREATE TABLE IF NOT EXISTS public.homepage_settings (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   site_name VARCHAR(255) DEFAULT 'TecBunny' NOT NULL,
   logo_url TEXT,
+  logo_public_id VARCHAR(255),
   banner_title VARCHAR(500) DEFAULT 'Premium Tech Accessories' NOT NULL,
   banner_subtitle VARCHAR(1000) DEFAULT 'Discover the latest in technology accessories with unbeatable prices, premium quality, and lightning-fast delivery across India.' NOT NULL,
   banner_background_color VARCHAR(100) DEFAULT 'from-blue-600 via-blue-500 to-purple-600' NOT NULL,
@@ -120,7 +125,9 @@ CREATE INDEX IF NOT EXISTS idx_customers_email ON public.customers(email);
 CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON public.orders(customer_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON public.orders(status);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);
-CREATE INDEX IF NOT EXISTS idx_products_sku ON public.products(sku);
+CREATE INDEX IF NOT EXISTS idx_products_brand ON public.products(brand);
+CREATE INDEX IF NOT EXISTS idx_products_in_stock ON public.products(in_stock);
+CREATE INDEX IF NOT EXISTS idx_products_created_at ON public.products(created_at);
 
 -- Add updated_at triggers
 CREATE OR REPLACE FUNCTION update_updated_at_column()
